@@ -344,8 +344,8 @@ class NET(torch.nn.Module):
                     neibors1 = torch.nonzero(similarity1).squeeze().t()
 
                     if args.ergnn_args['w_ll'] != 0:
-                        output_new_ = output_new[neibors[0]]
-                        output_old_ = output_old[neibors[1]]
+                        output_new_ = output_new[neibors[1]]
+                        output_old_ = output_old[neibors[0]]
                         loss_ll_ = self.mse(output_new_, output_old_.detach())
                         loss_ll += loss_ll_ * num
                         print('loss_ll_ {:.4f}'.format(loss_ll_.item()), output_new_.shape)
@@ -354,9 +354,9 @@ class NET(torch.nn.Module):
                         loss_lg += loss_lg_ * num
                         print('loss_lg_ {:.4f}'.format(loss_lg_.item()))
                     if args.ergnn_args['w_h'] != 0:
-                        embeddings_ = torch.abs(output_new[neibors1[0]] - output_new[neibors1[1]])
+                        embeddings_new = torch.abs(output_new[neibors1[0]] - output_new[neibors1[1]])
                         embeddings_old = torch.abs(output_old[neibors1[0]] - output_old[neibors1[1]])
-                        loss_h_ = F.kl_div(F.log_softmax(embeddings_ / 1.0, dim=-1),
+                        loss_h_ = F.kl_div(F.log_softmax(embeddings_new / 1.0, dim=-1),
                                              F.softmax(embeddings_old.detach() / 1.0, dim=-1), reduction='batchmean')
                         print('loss_h_ {:.4f}'.format(loss_h_.item()))
                         loss_h += loss_h_ * num
