@@ -60,11 +60,10 @@ def train_node_classifier(model, data, optimizer, weight=None, n_epoch=200, incr
         loss = ce(out[data.train_mask, 0:incremental_cls[1]], data.y[data.train_mask])
         d = data.adj_t.t().to_dense().to(args.device)
         if t > 0:
+            output_old = output_new = None
             if args.sep == 1:
-                out = model(old_data)
-            output_old = prev_model(data)
-            output_new = out[data.train_mask, :]
-            output_old = output_old[data.train_mask, :]
+                output_old = prev_model(old_data)[data.train_mask, :]
+                output_new = model(old_data)[data.train_mask, :]
             if args.cgl_method == 'ssm':
                 d += torch.eye(d.shape[0]).to(args.device)
                 neibors = torch.nonzero(d).squeeze().t()
@@ -82,8 +81,8 @@ def train_node_classifier(model, data, optimizer, weight=None, n_epoch=200, incr
             else:
                 pass
             if args.w_ll != 0:
-                output_new_ = output_new[neibors[0]]
-                output_old_ = output_old[neibors[1]]
+                output_new_ = output_new[neibors[1]]
+                output_old_ = output_old[neibors[0]]
                 loss_ll = mse(output_new_, output_old_.detach())
                 print('loss_ll {:.4f}'.format(loss_ll.item()))
             if args.w_lg != 0:
@@ -92,15 +91,15 @@ def train_node_classifier(model, data, optimizer, weight=None, n_epoch=200, incr
             if args.w_h != 0:
                 if args.cgl_method == 'ssm':
                    neibors1 = neibors
-                embeddings_ = torch.abs(output_new[neibors1[0]] - output_new[neibors1[1]])
+                embeddings_new = torch.abs(output_new[neibors1[0]] - output_new[neibors1[1]])
                 embeddings_old = torch.abs(output_old[neibors1[0]] - output_old[neibors1[1]])
-                loss_h = F.kl_div(F.log_softmax(embeddings_ / 1.0, dim=-1),
+                loss_h = F.kl_div(F.log_softmax(embeddings_new / 1.0, dim=-1),
                                      F.softmax(embeddings_old.detach() / 1.0, dim=-1), reduction='batchmean')
                 print('loss_h {:.4f}'.format(loss_h.item()))
             if args.cgl_method == 'ssm' and w_m != 0:
-                embeddings_hop = torch.abs(output_new[neibors2[0]] - output_new[neibors2[1]])
+                embeddings_hop_new = torch.abs(output_new[neibors2[0]] - output_new[neibors2[1]])
                 embeddings_hop_old = torch.abs(output_old[neibors2[0]] - output_old[neibors2[1]])
-                loss_m = F.kl_div(F.log_softmax(embeddings_hop / 1.0, dim=-1),
+                loss_m = F.kl_div(F.log_softmax(embeddings_hop_new / 1.0, dim=-1),
                                     F.softmax(embeddings_hop_old.detach() / 1.0, dim=-1), reduction='batchmean')
                 print('loss_m {:.4f}'.format(loss_m.item()))
         loss = loss + args.w_ll * loss_ll + args.w_lg * loss_lg + args.w_h * loss_h + w_m * loss_m
