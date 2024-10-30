@@ -54,8 +54,6 @@ if __name__ == '__main__':
     parser.add_argument('--gem_args', type=str2dict, default={'memory_strength': 0.5, 'n_memories': 100}) #10
     parser.add_argument('--bare_args', type=str2dict, default={'Na': None})
     parser.add_argument('--joint_args', type=str2dict, default={'Na': None})
-    parser.add_argument('--sgreplay_args', type=str2dict,
-                        default={'sampler': 'd_samp', 'c_node_budget': 100, 'nei_budget': [0,0]})
     parser.add_argument('--cls-balance', type=strtobool, default=True, help='whether to balance the cls when training and testing')
     parser.add_argument('--reply', type=strtobool, default=True, help='whether to reply nodes')
     parser.add_argument('--repeats', type=int, default=3, help='how many times to repeat the experiments for the mean and std')
