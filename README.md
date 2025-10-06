@@ -3,7 +3,7 @@ This is the official repository for the paper [What Matters in Graph Class Incre
 
  
 
- ## Get Started
+ # Get Started
  
  This repository contains our GSIP implemented for running on GPU devices. To run the code, the following packages are required to be installed:
  
