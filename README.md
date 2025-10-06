@@ -1,5 +1,5 @@
 # Graph Spatial Information Preservation (GSIP)
-This is the official repository for the paper [What Matters in Graph Class Incremental Learning? An Information Preservation Perspective].
+This is the official repository for the paper [What Matters in Graph Class Incremental Learning? An Information Preservation Perspective](https://openreview.net/pdf?id=tJGX7tpGO8) (NeurIPS 2024).
 
  
 
