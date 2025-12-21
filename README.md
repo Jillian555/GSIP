@@ -52,7 +52,7 @@ Below is the example to run the ERGNN baseline with GCN backbone on the CoraFull
 
 
 # Cite
-If you find this repo useful, please cite
+If you find this repository helpful, please click the ⭐Star and cite our paper:
 
 ```
 @inproceedings{GSIP,
